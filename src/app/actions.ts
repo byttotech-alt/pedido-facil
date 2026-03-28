@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import type { OrderStatus } from '@/types/order';
+import { redirect } from 'next/navigation';
+import type { OrderStatus, ProductType } from '@/types/order';
 
 export async function createOrder(formData: FormData) {
   const supabase = await createClient();
@@ -14,12 +15,13 @@ export async function createOrder(formData: FormData) {
 
   const client_name = formData.get('client_name') as string;
   const client_phone = formData.get('client_phone') as string;
+  const product_type = formData.get('product_type') as ProductType;
   const description = formData.get('description') as string;
   const value = parseFloat(formData.get('value') as string);
   const delivery_date = formData.get('delivery_date') as string;
   const status = (formData.get('status') as OrderStatus) || 'pendente';
 
-  if (!client_name || !description || !value || !delivery_date) {
+  if (!client_name || !product_type || !description || !value || !delivery_date) {
     return { error: 'Preencha todos os campos obrigatórios' };
   }
 
@@ -27,6 +29,7 @@ export async function createOrder(formData: FormData) {
     user_id: user.id,
     client_name,
     client_phone: client_phone || null,
+    product_type,
     description,
     value,
     delivery_date,
@@ -51,12 +54,13 @@ export async function updateOrder(id: string, formData: FormData) {
 
   const client_name = formData.get('client_name') as string;
   const client_phone = formData.get('client_phone') as string;
+  const product_type = formData.get('product_type') as ProductType;
   const description = formData.get('description') as string;
   const value = parseFloat(formData.get('value') as string);
   const delivery_date = formData.get('delivery_date') as string;
   const status = formData.get('status') as OrderStatus;
 
-  if (!client_name || !description || !value || !delivery_date) {
+  if (!client_name || !product_type || !description || !value || !delivery_date) {
     return { error: 'Preencha todos os campos obrigatórios' };
   }
 
@@ -65,6 +69,7 @@ export async function updateOrder(id: string, formData: FormData) {
     .update({
       client_name,
       client_phone: client_phone || null,
+      product_type,
       description,
       value,
       delivery_date,
@@ -126,4 +131,31 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath('/', 'layout');
+  redirect('/login');
+}
+
+export async function updateStoreName(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'Não autorizado' };
+  }
+
+  const storeName = formData.get('store_name') as string;
+  
+  if (!storeName || storeName.trim() === '') {
+    return { error: 'O nome da loja não pode ser vazio' };
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    data: { store_name: storeName }
+  });
+
+  if (error) {
+    return { error: 'Erro ao atualizar nome: ' + error.message };
+  }
+
+  revalidatePath('/', 'layout');
+  return { success: true };
 }

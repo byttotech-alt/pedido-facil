@@ -3,12 +3,18 @@
 -- Execute este SQL no Supabase SQL Editor
 -- ============================================
 
+-- ============================================
+-- ATUALIZAÇÃO FASE 1: Adicione esta coluna no painel SQL se a tabela já existe
+-- ALTER TABLE public.orders ADD COLUMN product_type text NOT NULL DEFAULT 'Bolo' CHECK (product_type IN ('Bolo', 'Doce', 'Salgado', 'Kit Festa', 'Outro'));
+-- ============================================
+
 -- Tabela de pedidos
 CREATE TABLE public.orders (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   client_name text NOT NULL,
   client_phone text,
+  product_type text NOT NULL DEFAULT 'Bolo' CHECK (product_type IN ('Bolo', 'Doce', 'Salgado', 'Kit Festa', 'Outro')),
   description text NOT NULL,
   value numeric(10,2) NOT NULL DEFAULT 0,
   delivery_date date NOT NULL,

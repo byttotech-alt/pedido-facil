@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Order, OrderStatus } from '@/types/order';
+import type { Order, OrderStatus, ProductType } from '@/types/order';
 
 interface OrderModalProps {
   order?: Order;
@@ -13,6 +13,7 @@ interface OrderModalProps {
 export default function OrderModal({ order, onClose, onSubmit, isPending }: OrderModalProps) {
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
+  const [productType, setProductType] = useState<ProductType>('Bolo');
   const [description, setDescription] = useState('');
   const [value, setValue] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
@@ -22,6 +23,7 @@ export default function OrderModal({ order, onClose, onSubmit, isPending }: Orde
     if (order) {
       setClientName(order.client_name);
       setClientPhone(order.client_phone || '');
+      setProductType(order.product_type || 'Bolo');
       setDescription(order.description);
       setValue(order.value.toString());
       setDeliveryDate(order.delivery_date);
@@ -34,6 +36,7 @@ export default function OrderModal({ order, onClose, onSubmit, isPending }: Orde
     const formData = new FormData();
     formData.append('client_name', clientName);
     formData.append('client_phone', clientPhone);
+    formData.append('product_type', productType);
     formData.append('description', description);
     formData.append('value', value);
     formData.append('delivery_date', deliveryDate);
@@ -93,18 +96,39 @@ export default function OrderModal({ order, onClose, onSubmit, isPending }: Orde
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="client-phone">
-                WhatsApp do Cliente
-              </label>
-              <input
-                id="client-phone"
-                className="form-input"
-                type="tel"
-                placeholder="(11) 99999-9999"
-                value={handlePhoneMask(clientPhone)}
-                onChange={(e) => setClientPhone(e.target.value)}
-              />
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label" htmlFor="client-phone">
+                  WhatsApp do Cliente
+                </label>
+                <input
+                  id="client-phone"
+                  className="form-input"
+                  type="tel"
+                  placeholder="(11) 99999-9999"
+                  value={handlePhoneMask(clientPhone)}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="product-type">
+                  Tipo *
+                </label>
+                <select
+                  id="product-type"
+                  className="form-select"
+                  value={productType}
+                  onChange={(e) => setProductType(e.target.value as ProductType)}
+                  required
+                >
+                  <option value="Bolo">Bolo</option>
+                  <option value="Doce">Docinhos</option>
+                  <option value="Salgado">Salgado</option>
+                  <option value="Kit Festa">Kit Festa</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
             </div>
 
             <div className="form-group">

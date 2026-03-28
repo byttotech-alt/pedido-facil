@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import Header from '@/components/Header';
 import OrderList from '@/components/OrderList';
 import type { Order } from '@/types/order';
 
@@ -38,11 +37,7 @@ export default async function Home() {
 
   return (
     <div className="page-container">
-      <Header userEmail={user.email!} />
-      
-      <main>
-        <OrderList orders={sortedOrders} />
-      </main>
+      <OrderList orders={sortedOrders} />
     </div>
   );
 }

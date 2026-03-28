@@ -1,10 +1,12 @@
 export type OrderStatus = 'pendente' | 'em_producao' | 'entregue' | 'pago';
+export type ProductType = 'Bolo' | 'Doce' | 'Salgado' | 'Kit Festa' | 'Outro';
 
 export interface Order {
   id: string;
   user_id: string;
   client_name: string;
   client_phone: string | null;
+  product_type: ProductType;
   description: string;
   value: number;
   delivery_date: string;

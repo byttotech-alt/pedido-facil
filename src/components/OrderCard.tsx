@@ -72,7 +72,12 @@ export default function OrderCard({
     >
       <div className="order-card-header">
         <div>
-          <div className="order-card-client">{order.client_name}</div>
+          <div className="order-card-client" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            {order.client_name}
+            <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-secondary)', padding: '2px 8px', background: 'var(--bg-card)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-medium)' }}>
+              {order.product_type}
+            </span>
+          </div>
           {order.client_phone && (
             <div className="order-card-phone">
               📱{' '}
